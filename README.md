@@ -2,7 +2,7 @@
 
 [Occam](http://dmm.sysc.pdx.edu) is a program designed by [Martin Zwick](http://www.sysc.pdx.edu/Faculty/Zwick/zwick.html) to facilitate [Reconstructability Analysis](http://www.sysc.pdx.edu/download/papers/ldlpitfabstract.htm) of arbitrary data sets.
 
-This library manipulates Occam input files to various ends.  Need to set aside random portions of your data for testing?  Need to perform some custom binning for your continuous variable?  Need to make arbitrary transformations to your data?  You have come to the right place.
+This library manipulates Occam input files and data to various ends.  Need to set aside random portions of your data for testing?  Need to perform some custom binning for your continuous variable?  Need to make arbitrary transformations to your data?  You have come to the right place.
 
 ## Usage
 
