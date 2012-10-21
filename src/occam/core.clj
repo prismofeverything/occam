@@ -1,6 +1,9 @@
 (ns occam.core
   (:require [clojure.java.io :as io]
-            [clojure.string :as string]))
+            [clojure.string :as string]
+            [occam.cluster :as cluster]))
+
+;; reading occam from strings
 
 (defn split-nominal
   [line]
@@ -29,6 +32,8 @@
         data (process-raw split-data raw-data)
         test (process-raw split-data raw-test)]
     {:preamble raw-preamble :nominal nominal :data data :test test}))
+
+;; writing occam to strings
 
 (defn write-nominal
   [nm]
@@ -62,6 +67,8 @@
         transformed (transform occam)]
     (write-occam to transformed)))
 
+;; specific useful transforms
+
 (defn randomize-transform
   [occam]
   (update-in
@@ -79,3 +86,7 @@
     (assoc occam
       :data data
       :test test)))
+
+(defn bin-variable-by
+  [occam variable bins distance average]
+  ))
