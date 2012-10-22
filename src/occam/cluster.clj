@@ -47,3 +47,19 @@
      (map
       (partial groups data distance)
       (iterate (iterate-means data distance average) guesses)))))
+
+(defn distance-for
+  [metric]
+  (fn [a b]
+    (let [between (- a (metric b))]
+      (if (< 0 between) between (- between) ))))
+
+(defn average-for
+  [metric]
+  (fn [z]
+    (/ (reduce #(+ %1 (metric %2)) 0 z) (count z))))
+
+(defn clustering
+  [data metric]
+  (k-groups data (distance-for metric) (average-for metric)))
+

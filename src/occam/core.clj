@@ -77,16 +77,71 @@
      (sort-by (fn [_] (rand 3)) data))))
 
 (defn parcel-test-data
-  [occam portion]
-  (let [random (:data (randomize-transform occam))
-        total (count random)
-        num (quot (* total portion) 1)
-        test (take num random)
-        data (drop num random)]
-    (assoc occam
-      :data data
-      :test test)))
+  [portion]
+  (fn [occam]
+    (let [random (:data (randomize-transform occam))
+          total (count random)
+          num (quot (* total portion) 1)
+          test (take num random)
+          data (drop num random)]
+      (assoc occam
+        :data data
+        :test test))))
+
+(defn find-in
+  [s f v]
+  (filter #(= v (f %)) s))
+
+(defn occam-index
+  [occam variable]
+  (-> (find-in
+       (map-indexed vector (:nominal occam))
+       (fn [[index var]]
+         (:short-name var))
+       (name variable))
+      first first))
+
+(defn greatest
+  [c f z]
+  (let [head (first z)
+        value (f head)]
+    (first
+     (reduce
+      (fn [[great value] untested]
+        (let [possibly (f untested)]
+          (if (c possibly value)
+            [untested possibly]
+            [great value])))
+      [head value]
+      z))))
+
+(defn variable-metric
+  [index]
+  (fn [z]
+    (nth z index)))
+
+(defn bin-data-by-index
+  [data index num-bins]
+  (if data
+    (let [metric (variable-metric index)
+          cluster (cluster/clustering data metric)
+          top (greatest > metric data)
+          bins (take num-bins (iterate inc 1))
+          guesses (reverse (map #(/ (metric top) %) bins))
+          groups (last (cluster guesses))]
+      (apply
+       concat
+       (map-indexed
+        (fn [state bin]
+          (map #(assoc % index state) bin))
+        groups)))))
 
 (defn bin-variable-by
-  [occam variable bins distance average]
-  ))
+  [variable bins]
+  (fn [occam]
+    (let [index (occam-index occam variable)
+          data (bin-data-by-index (:data occam) index bins)
+          test (bin-data-by-index (:test occam) index bins)]
+      (assoc occam
+        :data data
+        :test test))))
