@@ -1,4 +1,4 @@
-(defproject occam "0.0.1"
+(defproject occam "0.0.2"
   :description "Utilities for transforming and processing Occam files"
   :url "http://dmm.sysc.pdx.edu"
   :license {:name "Eclipse Public License"
