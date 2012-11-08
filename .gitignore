@@ -3,6 +3,7 @@
 /classes
 /checkouts
 /csv
+/occam
 pom.xml
 *.jar
 *.class

@@ -1,7 +1,8 @@
 (ns occam.csv
   (:require [clojure.java.io :as io]
             [clojure.string :as string]
-            [clojure.data.csv :as csv]))
+            [clojure.data.csv :as csv]
+            [occam.core :as occam]))
 
 (def symbols "abcdefghijklmnopqrstuvwxyz")
 
@@ -11,7 +12,7 @@
     (loop [index (dec (count d))
            digits d]
       (if (< index 0)
-        (vec (cons 1 digits))
+        (vec (cons 0 digits))
         (let [next (inc (nth d index))]
           (if (>= next base)
             (recur (dec index) (assoc digits index 0))
@@ -23,7 +24,7 @@
 
 (defn name-sequence
   [symbols]
-  (iterate (next-digit (count symbols)) []))
+  (iterate (next-digit (count symbols)) [0]))
 
 (defn read-csv
   [filename]
@@ -31,14 +32,22 @@
     (doall
      (csv/read-csv in))))
 
+(defn find-unique
+  [s]
+  (sort
+   (keys
+    (reduce
+     #(assoc %1 %2 true)
+     {} s))))
+
 (defn process-column
   [& column]
   (let [short-name (digits-to-symbols (first column) symbols)
         column (rest column)
         variable (first column)
         data (rest column)
-        values (set data)
-        value-map (into {} (map-indexed (fn [index value] [value index]) (sort values)))
+        values (sort (set data))
+        value-map (into {} (map-indexed (fn [index value] [value index]) values))
         nominal {:long-name variable :degrees (count values) :role 0 :short-name short-name}]
     {:data (map value-map data) :nominal nominal :values value-map}))
 
@@ -49,5 +58,12 @@
         short-names (take (count header) (name-sequence symbols))
         columns (apply (partial map process-column) (cons short-names rows))
         after (apply (partial map vector) (map :data columns))
-        nominals (map :nominal columns)]
-    {:nominal nominals :data after}))
+        nominals (map :nominal columns)
+        maps (map :values columns)]
+    {:nominal nominals :data after :values maps}))
+
+(defn csv-to-occam
+  [from to]
+  (let [csv (read-csv from)
+        occam (process-csv csv)]
+    (occam/write-occam to occam)))
