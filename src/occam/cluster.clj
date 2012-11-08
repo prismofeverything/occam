@@ -37,9 +37,6 @@
       (if-let [sq (seq sq)]
         (if (= (first sq) last) '() (take-while-unstable sq))))))
 
-;; We can make a function, which takes our data, notion of distance, and notion of average,
-;; and gives us back a function which, for a given set of initial guesses at the means,
-;; shows us how the group memberships change.
 (defn k-groups
   [data distance average]
   (fn [guesses]
