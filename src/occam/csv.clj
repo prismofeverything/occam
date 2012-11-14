@@ -44,7 +44,7 @@
   [& column]
   (let [short-name (digits-to-symbols (first column) symbols)
         column (rest column)
-        variable (first column)
+        variable (string/replace (first column) #" " "-")
         data (rest column)
         values (sort (set data))
         value-map (into {} (map-indexed (fn [index value] [value index]) values))
