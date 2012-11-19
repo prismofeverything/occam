@@ -26,6 +26,12 @@
   [symbols]
   (iterate (next-digit (count symbols)) [0]))
 
+(defn symbol-tower
+  [symbols]
+  (map
+   #(digits-to-symbols % symbols)
+   (name-sequence symbols)))
+
 (defn read-csv
   [filename]
   (with-open [in (io/reader filename)]
