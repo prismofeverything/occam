@@ -101,20 +101,6 @@
        (name variable))
       first first))
 
-(defn greatest
-  [c f z]
-  (let [head (first z)
-        value (f head)]
-    (first
-     (reduce
-      (fn [[great value] untested]
-        (let [possibly (f untested)]
-          (if (c possibly value)
-            [untested possibly]
-            [great value])))
-      [head value]
-      z))))
-
 (defn variable-metric
   [index]
   (fn [z]
@@ -125,9 +111,7 @@
   (if data
     (let [metric (variable-metric index)
           cluster (cluster/clustering data metric)
-          top (greatest > metric data)
-          bins (take num-bins (iterate inc 1))
-          guesses (reverse (map #(/ (metric top) %) bins))
+          guesses (cluster/make-guesses data metric num-bins)
           groups (last (cluster guesses))]
       (apply
        concat

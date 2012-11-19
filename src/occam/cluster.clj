@@ -56,7 +56,43 @@
   (fn [z]
     (/ (reduce #(+ %1 (metric %2)) 0 z) (count z))))
 
+(defn greatest
+  [c f z]
+  (let [head (first z)
+        value (f head)]
+    (first
+     (reduce
+      (fn [[great value] untested]
+        (let [possibly (f untested)]
+          (if (c possibly value)
+            [untested possibly]
+            [great value])))
+      [head value]
+      z))))
+
+(defn make-guesses
+  [data metric num-bins]
+  (let [top (greatest > metric data)
+        bins (take num-bins (iterate inc 1))
+        guesses (reverse (map #(/ (metric top) %) bins))]
+    guesses))
+
 (defn clustering
   [data metric]
   (k-groups data (distance-for metric) (average-for metric)))
 
+(defn cluster-by
+  [data metric num-bins new-key]
+  (let [cluster (clustering data metric)
+        guesses (make-guesses data metric num-bins)
+        groups (sort-by (comp metric first) (last (cluster guesses)))]
+    (apply
+     concat
+     (map-indexed
+      (fn [index group]
+        (map
+         (fn [datum]
+           (assoc datum
+             new-key index))
+         group))
+      groups))))
