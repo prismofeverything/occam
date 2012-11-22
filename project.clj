@@ -6,5 +6,6 @@
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [org.clojure/data.codec "0.1.0"]
                  [org.clojure/data.csv "0.1.2"]
+                 [http.async.client "0.5.0"]
                  [incanter "1.4.0"]]
   :jvm-opts ["-Xmx1g"])

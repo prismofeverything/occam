@@ -5,7 +5,9 @@
 
 (defn read-fit-table
   [filename]
-  (let [raw (slurp filename)
+  (let [raw (-> (slurp filename)
+                (string/trim)
+                (string/replace #"\*" ""))
         lines (string/split raw #"\n")
         portions (map #(string/split % #"\|") lines)
         entries (map #(map (fn [p] (string/split (string/trim p) #"\t")) %) portions)
@@ -47,11 +49,20 @@
 (defn split-state
   [equal]
   (let [[variable state] (string/split equal #"=")]
-    {variable state}))
+    (Integer/parseInt state)))
 
 (defn branch-into
   [tree [path probabilities]]
   (assoc-in tree path probabilities))
+
+(defn intify
+  [matrix]
+  (map
+   (fn [x]
+     (if (number? x)
+       [(int x)]
+       (map int x)))
+   matrix))
 
 (defn fit-mapping
   [[conditions observed calculated]]
@@ -60,8 +71,7 @@
         m-calculated (subcols calculated cols)
         variables (:headings conditions)
         states (map split-state (take cols (:headings calculated)))
-        int-conditions (map #(map int %) (:matrix conditions))
-        _ (println m-calculated)
+        int-conditions (intify (:matrix conditions))
         pair (map vector int-conditions m-calculated)
         mapping (reduce branch-into {} pair)]
     {:mapping mapping
@@ -76,14 +86,18 @@
           (loop [levels row
                  depth 0
                  index 0]
-            (let [level (first levels)
-                  reach (+ depth level)]
-              (if (> reach delve)
-                index
-                (recur (rest levels) reach (inc index)))))]
+            (if-let [level (first levels)]
+              (let [reach (+ depth level)]
+                (if (>= reach delve)
+                  index
+                  (recur (rest levels) reach (inc index))))
+              (do
+                (println "INDEX OUT?" index)
+                (dec index))))]
       (nth (:states mapping) index))))
 
 (defn read-fit-mapping
   [filename]
-  (let [tables (read-fit-table filename)]
+  (let [tables (-> (read-fit-table filename)
+                   (parse-tables))]
     (fit-mapping tables)))

@@ -85,14 +85,17 @@
   [data metric num-bins new-key]
   (let [cluster (clustering data metric)
         guesses (make-guesses data metric num-bins)
-        groups (sort-by (comp metric first) (last (cluster guesses)))]
-    (apply
-     concat
-     (map-indexed
-      (fn [index group]
-        (map
-         (fn [datum]
-           (assoc datum
-             new-key index))
-         group))
-      groups))))
+        groups (sort-by (comp metric first) (last (cluster guesses)))
+        average (average-for metric)
+        averages (map average groups)
+        restored (apply
+                  concat
+                  (map-indexed
+                   (fn [index group]
+                     (map
+                      (fn [datum]
+                        (assoc datum
+                          new-key index))
+                      group))
+                   groups))]
+    {:restored restored :averages averages}))

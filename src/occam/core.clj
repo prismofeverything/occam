@@ -35,6 +35,22 @@
 
 ;; writing occam to strings
 
+(defn histogram
+  [s]
+  (reduce
+   (fn [hist item]
+     (assoc hist
+       item (if-let [total (get hist item)] (inc total) 1)))
+   {} s))
+
+(defn bind-frequencies
+  [rows]
+  (let [frequency-map (histogram rows)]
+    (map
+     (fn [[row frequency]]
+       (concat row (list frequency)))
+     frequency-map)))
+
 (defn write-nominal
   [nm]
   (string/join "," [(:long-name nm) (:degrees nm) (:role nm) (:short-name nm)]))
