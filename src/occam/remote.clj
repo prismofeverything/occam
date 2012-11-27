@@ -36,8 +36,7 @@
    ;; :batchOutput "ryan.spangler@gmail.com"
    ;; :emailSubject "yoyoyo"
    :batchOutput ""
-   :emailSubject ""
-   :target "_blank"})
+   :emailSubject ""})
 
 (def search-headers
   {"connection" "keep-alive"})
