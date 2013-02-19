@@ -2,6 +2,9 @@
   (:require [clojure.java.io :as io]
             [http.async.client :as http]))
 
+;; The following curl call works:
+;; curl -X POST -F 'data=@/Users/rspangler/Projects/fuga/occam/in/book-1-fugue-4-history-5-note.in' -F 'action=search' -F 'model=' -F 'evalmode=info' -F 'refmodel=default' -F 'searchtype=loopless' -F 'searchdir=default' -F 'sortby=information' -F 'searchsortdir=descending' -F 'searchlevels=7' -F 'sortreportby=information' -F 'sortdir=descending' -F 'show_h=yes' -F 'show_dlr=yes' -F 'show_alpha=yes' -F 'show_pct_dh=yes' -F 'show_aic=yes' -F 'show_bic=yes' -F 'show_bp=yes' -F 'show_incr_a=yes' -F 'show_pct=yes' -F 'show_pct_cover=yes' -F 'show_pct_miss=yes' -F 'printoptions=y' -F 'batchOutput=' -F 'emailSubject=' -F 'format=y' 'http://dmm.sysc.pdx.edu/weboccam.cgi?action=search'
+
 (def search-url
   "http://dmm.sysc.pdx.edu/weboccam.cgi?action=search")
 
@@ -28,15 +31,17 @@
    :show_pct "yes"
    :show_pct_cover "yes"
    :show_pct_miss "yes"
-   ;; :format "y"
    :printoptions "y"
+   :batchOutput ""
+   :emailSubject ""})
+
+   ;; :format "y"
    ;; :inversenotation "y"
    ;; :skipnominal "y"
    ;; :functionvalues "y"
    ;; :batchOutput "ryan.spangler@gmail.com"
    ;; :emailSubject "yoyoyo"
-   :batchOutput ""
-   :emailSubject ""})
+
 
 (def search-headers
   {"connection" "keep-alive"})

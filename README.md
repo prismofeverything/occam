@@ -9,7 +9,7 @@ This library manipulates Occam input files and data to various ends.  Need to se
 Add the occam library to your project.clj:
 
 ```clj
-[occam "0.0.1"]
+[occam "0.0.2"]
 ```
 
 Require the library and transform some data:
